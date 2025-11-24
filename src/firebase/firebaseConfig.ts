@@ -3,12 +3,16 @@ import { getAuth } from "firebase/auth";
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
   getFirestore,
   onSnapshot,
   orderBy,
   query,
-  serverTimestamp
+  serverTimestamp,
+  setDoc
 } from "firebase/firestore";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBwDICxuJ9Jwbx-1UH-TBU487-BQQUucjI",
@@ -22,11 +26,21 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
+// Use getAuth for React Native (warning is acceptable, persistence handled by AsyncStorage manually)
 export const auth = getAuth(app);
+
 export const db = getFirestore(app);
 
+export const storage = getStorage(app);
+
 // Export Firestore functions
-export { addDoc, onSnapshot, orderBy, query, serverTimestamp };
+export { addDoc, doc, getDoc, onSnapshot, orderBy, query, serverTimestamp, setDoc };
+
+// Export Storage functions
+  export { getDownloadURL, ref, uploadBytes };
 
 // Export messages collection
 export const messagesCollection = collection(db, "messages");
+
+// Export users collection
+export const usersCollection = collection(db, "users");
