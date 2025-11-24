@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  TextInput,
   Button,
   FlatList,
   StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 import {
   addDoc,
-  serverTimestamp,
-  query,
-  orderBy,
+  messagesCollection,
   onSnapshot,
-} from "../../firebase";
+  orderBy,
+  query,
+  serverTimestamp,
+} from "../../src/firebase/firebaseConfig";
 
-import { messagesCollection } from "../../firebase";
+import type { DocumentData, QuerySnapshot } from "firebase/firestore";
 
 type MessageType = {
   id: string;
@@ -37,9 +38,9 @@ export default function ChatScreen({ name }: Props) {
   useEffect(() => {
     const q = query(messagesCollection, orderBy("createdAt", "asc"));
 
-    const unsub = onSnapshot(q, (snapshot) => {
+    const unsub = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
       const list: MessageType[] = [];
-      snapshot.forEach((doc) => {
+      snapshot.forEach((doc: any) => {
         list.push({
           id: doc.id,
           ...(doc.data() as Omit<MessageType, "id">),
