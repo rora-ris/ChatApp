@@ -26,7 +26,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// Use getAuth for React Native (warning is acceptable, persistence handled by AsyncStorage manually)
+// Initialize Auth - Using getAuth with manual AsyncStorage handling
+// Firebase Auth will show a warning but work correctly with manual persistence
 export const auth = getAuth(app);
 
 export const db = getFirestore(app);

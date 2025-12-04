@@ -1,8 +1,7 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Button, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { checkAutoLogin, login, register } from "../src/firebase/firebaseAuth";
+import React, { useState } from "react";
+import { Button, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { login, register } from "../src/firebase/firebaseAuth";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -10,26 +9,10 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegister, setIsRegister] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Check auto-login
-    const checkLogin = async () => {
-      const user = await checkAutoLogin();
-      if (user) {
-        router.replace("/(tabs)/ChatScreen");
-      } else {
-        setLoading(false);
-      }
-    };
-    checkLogin();
-  }, []);
 
   const handleLogin = async () => {
     try {
-      const user = await login(email, password);
-      await AsyncStorage.setItem("userEmail", user.email);
-      await AsyncStorage.setItem("username", user.username);
+      await login(email, password);
       router.replace("/(tabs)/ChatScreen");
     } catch (e) {
       alert("Login gagal: " + (e as Error).message);
@@ -48,15 +31,6 @@ export default function LoginScreen() {
       alert("Register gagal: " + (e as Error).message);
     }
   };
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={{ marginTop: 10 }}>Checking session...</Text>
-      </View>
-    );
-  }
 
   return (
   <View

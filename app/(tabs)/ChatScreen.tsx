@@ -109,7 +109,7 @@ export default function ChatScreen() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.5,
@@ -125,7 +125,9 @@ export default function ChatScreen() {
 
     try {
       setUploading(true);
+      console.log('Attempting to upload image...');
       const imageUrl = await uploadImage(imageUri, userUid);
+      console.log('Image uploaded successfully:', imageUrl);
       
       await addDoc(messagesCollection, {
         imageUrl,
@@ -133,9 +135,13 @@ export default function ChatScreen() {
         username,
         createdAt: serverTimestamp(),
       });
+      
+      console.log('Message added to Firestore');
+      Alert.alert("Success", "Image uploaded successfully!");
     } catch (error) {
-      Alert.alert("Error", "Failed to upload image");
-      console.error(error);
+      console.error('Upload error:', error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to upload image";
+      Alert.alert("Error", errorMessage);
     } finally {
       setUploading(false);
     }
@@ -170,8 +176,17 @@ export default function ChatScreen() {
           text: "Logout",
           style: "destructive",
           onPress: async () => {
-            await logout();
-            router.replace("/");
+            try {
+              await logout();
+              // Force navigation with push to clear stack
+              router.push("/");
+              // Small delay then replace to ensure state is cleared
+              setTimeout(() => {
+                router.replace("/");
+              }, 100);
+            } catch (error) {
+              console.error("Logout error:", error);
+            }
           }
         }
       ]
